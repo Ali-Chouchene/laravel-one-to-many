@@ -91,7 +91,7 @@ class ProjectController extends Controller
             'name' => ['required', 'string', Rule::unique('projects')->ignore($project->id), 'max:60'],
             'description' => 'required|string|min:30',
             'image' => 'nullable|image|mimes:jpeg,jpg,png,webp,jfif',
-            'link' => 'required|url|unique:projects'
+            'link' => ['required', 'url', Rule::unique('projects')->ignore($project->id)]
         ], [
             'name.required' => 'Project name is required',
             'name.unique' => "$request->name name is already taken",
