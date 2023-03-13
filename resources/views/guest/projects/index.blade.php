@@ -3,8 +3,8 @@
 @section('content')
 
 <div class="container">
-    <h1 class="mt-4">My Projects</h1>
-    <a class="btn btn-success" href="{{route('admin.projects.create')}}">Create Project</a>
+    <h1 class="my-5 text-center">My Projects</h1>
+
     @foreach($projects as $project)
     <div class=" d-flex flex-column align-items-center">
         <div class="card d-flex flex-column align-items-center my-3 p-5 text-center" style="width: 60%;">
@@ -22,6 +22,7 @@
         </div>
     </div>
     @endforeach
+
     <hr>
     <div class="d-flex justify-content-center align-items-center my-5">
         @if($projects->hasPages())

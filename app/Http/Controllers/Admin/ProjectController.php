@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Project;
+use App\Models\Type;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -17,7 +18,7 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        $projects = Project::orderBy('updated_at', 'DESC')->get();
+        $projects = Project::orderBy('updated_at', 'DESC')->simplePaginate(5);
         return view('admin.projects.index', compact('projects'));
     }
 
@@ -26,7 +27,9 @@ class ProjectController extends Controller
      */
     public function create()
     {
-        return view('admin.projects.create');
+        $project = new Project();
+        $types = Type::orderBy('type')->get();
+        return view('admin.projects.create', compact('project', 'types'));
     }
 
     /**
@@ -38,7 +41,8 @@ class ProjectController extends Controller
             'name' => 'required|string|unique:projects|max:60',
             'description' => 'required|string|min:30',
             'image' => 'nullable|image|mimes:jpeg,jpg,png,webp,jfif',
-            'link' => 'required|url|unique:projects'
+            'link' => 'required|url|unique:projects',
+            'type_id' => 'nullable|exists:types,id'
         ], [
             'name.required' => 'Project name is required',
             'name.unique' => "$request->name name is already taken",
@@ -50,6 +54,7 @@ class ProjectController extends Controller
             'link.required' => 'Project link is required',
             'link.url' => 'The link must be an URL',
             'link.unique' => "The project Link exist already",
+            'type_id' => 'The type dosen\'t exist'
 
         ]);
 
@@ -61,6 +66,7 @@ class ProjectController extends Controller
             $data['image'] = $img_url;
         };
         $project->fill($data);
+        $project->status = Arr::exists($data, 'status');
         $project->save();
         return to_route('admin.projects.show', $project->id);
     }
@@ -78,8 +84,9 @@ class ProjectController extends Controller
      */
     public function edit(string $id)
     {
+        $types = Type::orderBy('type')->get();
         $project = Project::findOrFail($id);
-        return view('admin.projects.edit', compact('project'));
+        return view('admin.projects.edit', compact('project', 'types'));
     }
 
     /**
@@ -115,6 +122,7 @@ class ProjectController extends Controller
         };
 
         $project->fill($data);
+        $project->status = Arr::exists($data, 'status');
         $project->save();
 
         return redirect()->route('admin.projects.show', $project->id);
