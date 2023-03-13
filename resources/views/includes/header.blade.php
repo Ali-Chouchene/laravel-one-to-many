@@ -24,6 +24,11 @@
                         <h4>{{ __('Projects') }}</h4>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{route('admin.types.index') }}">
+                        <h4>{{ __('Types') }}</h4>
+                    </a>
+                </li>
             </ul>
 
             <!-- Right Side Of Navbar -->
